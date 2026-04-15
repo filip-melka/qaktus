@@ -13,18 +13,11 @@ import { UrlInputRow } from "./url-input-row";
 import { useState } from "react";
 import { CustomWeightsDialog } from "./custom-weights-dialog";
 import { Toggle } from "./ui/toggle";
-
-function isValidUrl(value: string): boolean {
-  try {
-    new URL(value);
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { isValidUrl } from "@/lib/url";
 
 interface UrlFormProps {
   urls: string[];
+  urlIds: string[];
   onUrlChange(index: number, value: string): void;
   onAddUrl(): void;
   onRemoveUrl(index: number): void;
@@ -36,6 +29,7 @@ interface UrlFormProps {
 
 export function UrlForm({
   urls,
+  urlIds,
   onUrlChange,
   onAddUrl,
   onRemoveUrl,
@@ -53,7 +47,7 @@ export function UrlForm({
       <div className="flex flex-col gap-3">
         {urls.map((url, i) => (
           <UrlInputRow
-            key={i}
+            key={urlIds[i]}
             value={url}
             onChange={(value) => onUrlChange(i, value)}
             onRemove={urls.length > 1 ? () => onRemoveUrl(i) : undefined}
@@ -64,7 +58,7 @@ export function UrlForm({
         </Button>
         <Toggle
           className="mt-10 w-fit px-4"
-          aria-label="Toggle bookmark"
+          aria-label="Toggle custom weights"
           size="sm"
           pressed={isUsingCustomWeights}
           onPressedChange={(newValue) => setIsUsingCustomWeights(newValue)}
