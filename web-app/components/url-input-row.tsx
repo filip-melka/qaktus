@@ -8,15 +8,7 @@ import {
 } from "@/components/ui/input-group";
 import { Link, X } from "lucide-react";
 import { useState } from "react";
-
-function isValidUrl(value: string): boolean {
-  try {
-    new URL(value);
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { isValidUrl } from "@/lib/url";
 
 interface UrlInputRowProps {
   value: string;

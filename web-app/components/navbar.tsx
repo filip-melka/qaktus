@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { WaitlistDialog } from "@/components/waitlist-dialog";
 
 export function Navbar() {
   return (
@@ -10,7 +9,6 @@ export function Navbar() {
         </div>
         <h1 className="text-xl font-bold">Qaktus</h1>
       </div>
-      <WaitlistDialog />
     </nav>
   );
 }

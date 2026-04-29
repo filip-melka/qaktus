@@ -335,8 +335,19 @@ class TestHandler:
         result = handler(self._valid_event, None)
         body = json.loads(result["body"])
         assert "short_url" in body
+
+    def test_success_short_url_uses_base_url_env(self, monkeypatch):
+        monkeypatch.setattr("generate_link.BASE_URL", "https://short.ly")
+        result = handler(self._valid_event, None)
+        body = json.loads(result["body"])
         code = body["short_code"]
         assert body["short_url"] == f"https://short.ly/{code}"
+
+    def test_success_short_url_is_none_when_base_url_unset(self, monkeypatch):
+        monkeypatch.setattr("generate_link.BASE_URL", "")
+        result = handler(self._valid_event, None)
+        body = json.loads(result["body"])
+        assert body["short_url"] is None
 
     def test_success_body_contains_correct_targets(self):
         result = handler(self._valid_event, None)

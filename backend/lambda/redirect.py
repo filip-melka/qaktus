@@ -1,9 +1,13 @@
 import json
+import logging
 import os
 import random
 from typing import Any
 
 import boto3
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 _table = None
 
@@ -29,7 +33,9 @@ def handler(event: dict, context: Any) -> dict:
 
     item = _get_table().get_item(Key={"short_code": short_code}).get("Item")
     if not item:
+        logger.warning("Short code not found: %s", short_code)
         return {"statusCode": 404, "body": json.dumps({"error": "Short code not found"})}
 
     url = pick_url(item["targets"])
+    logger.info("Redirecting short_code=%s to %s", short_code, url)
     return {"statusCode": 301, "headers": {"Location": url}, "body": ""}

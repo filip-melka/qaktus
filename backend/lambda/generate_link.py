@@ -4,6 +4,7 @@ import os
 import random
 import string
 import time
+import urllib.parse
 from typing import Any
 
 import boto3
@@ -14,6 +15,7 @@ logger.setLevel(logging.INFO)
 
 BASE62 = string.digits + string.ascii_lowercase + string.ascii_uppercase
 MAX_RETRIES = 5
+BASE_URL = os.environ.get("BASE_URL", "")
 
 # --- DynamoDB storage ---
 _table = None
@@ -72,6 +74,9 @@ def validate_body(body: dict) -> str | None:
     for i, entry in enumerate(body["urls"]):
         if "original_url" not in entry:
             return f"Entry {i} is missing 'original_url'"
+        parsed = urllib.parse.urlparse(entry["original_url"])
+        if parsed.scheme not in ("http", "https"):
+            return f"Entry {i} has an invalid URL scheme (must be http or https)"
         if "weight" not in entry:
             return f"Entry {i} is missing 'weight'"
         if not isinstance(entry["weight"], (int, float)) or entry["weight"] <= 0:
@@ -115,7 +120,7 @@ def handler(event: dict, context: Any) -> dict:
         201,
         {
             "short_code": final_code,
-            "short_url": f"https://short.ly/{final_code}",
+            "short_url": f"{BASE_URL}/{final_code}" if BASE_URL else None,
             "targets": targets,
             "expires_at": expires_at,
         },
